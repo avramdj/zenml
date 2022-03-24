@@ -172,10 +172,14 @@ def update_stack(
     container_registry_name: Optional[str] = None,
     step_operator_name: Optional[str] = None,
 ) -> None:
-    """Register a stack."""
+    """Update a stack."""
     with console.status(f"Updating stack `{stack_name}`..."):
         repo = Repository()
-        stack_components = {}
+        stack_components = {
+            StackComponentType.METADATA_STORE: repo.active_stack.metadata_store,
+            StackComponentType.ARTIFACT_STORE: repo.active_stack.artifact_store,
+            StackComponentType.ORCHESTRATOR: repo.active_stack.orchestrator,
+        }
 
         if metadata_store_name:
             stack_components[
