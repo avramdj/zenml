@@ -22,6 +22,7 @@ import yaml
 from pydantic import BaseModel, ValidationError
 
 import zenml
+from zenml.console import console
 from zenml.constants import (
     ENV_ZENML_REPOSITORY_PATH,
     LOCAL_CONFIG_DIRECTORY_NAME,
@@ -318,9 +319,9 @@ class Repository:
         return self._stack_from_wrapper(self.stack_store.get_stack(name))
 
     def register_stack(self, stack: Stack) -> None:
-        """Registers a stack and it's components.
+        """Registers a stack and its components.
 
-        If any of the stacks' components aren't registered in the repository
+        If any of the stack's components aren't registered in the repository
         yet, this method will try to register them as well.
 
         Args:
@@ -336,6 +337,10 @@ class Repository:
             StackWrapper.from_stack(stack)
         )
         track_event(AnalyticsEvent.REGISTERED_STACK, metadata=metadata)
+
+    def update_stack(self, stack: Stack) -> None:
+        """Updates a stack and its components."""
+        console.print("Updating the component")
 
     def deregister_stack(self, name: str) -> None:
         """Deregisters a stack.
@@ -416,6 +421,14 @@ class Repository:
             name: The name of the component to deregister.
         """
         self.stack_store.deregister_stack_component(component_type, name=name)
+
+    def update_stack_component(
+        self, component_type: StackComponentType, old_name: str, new_name: str
+    ) -> None:
+        """Updates a stack component."""
+        console.print("Updating the component")
+        # self.deregister_stack_component(component_type, old_name)
+        # self.register_stack_component
 
     @track(event=AnalyticsEvent.GET_PIPELINES)
     def get_pipelines(
